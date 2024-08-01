@@ -1,7 +1,7 @@
 #Include JSON.ahk
 
 HttpGetJSON() {
-    AuthorizationToken := ""
+    AuthorizationToken := "TOKEN" ;TODO: insert token here
     URL := "https://api.lzt.market/user/orders"
 
     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -26,6 +26,7 @@ ExtractTelegramIdPhones() {
     phonesIdsMap := {}
     FileRead, textVar, accounts.json
     jsonObj := JSON.Load(textVar)
+    
     for index, item in jsonObj.items {
         id := item.item_id
         phone := item.telegram_phone
@@ -57,7 +58,7 @@ LoadTelegram(num, numId) {
 }
 
 GetTelegramCode(numId) {
-    AuthorizationToken := "TOKEN"
+    AuthorizationToken := "TOKEN" ;TODO: insert token here
     URL := "https://api.lzt.market/" . numId . "/telegram-login-code"
 
     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -67,11 +68,13 @@ GetTelegramCode(numId) {
 
     http.Send()
     responseText := http.responseText
-    FileDelete, code.json
+
+    If (FileExist("code.json")) {
+        FileDelete, code.json
+    }
     FileAppend, %responseText%, code.json
     FileRead, jsonText, code.json
     RegExMatch(jsonText, """code"":\s*""(\d+)""", match)
-    MsgBox, Match: %match%
     return match
 }
 
